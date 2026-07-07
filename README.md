@@ -1,3 +1,26 @@
+> ## ⚙️ Fork note — Python 3.10+ / modern NumPy & PyTorch compatibility
+>
+> This is a maintenance fork of [`jayg996/BTC-ISMIR19`](https://github.com/jayg996/BTC-ISMIR19)
+> by Jonggwon Park et al. All credit for the model, the paper and the original
+> code belongs to the original authors. Licensed under the MIT License (see
+> [`LICENSE`](LICENSE)); this fork preserves that license.
+>
+> The upstream code (2019) breaks on modern Python / NumPy / PyTorch. This fork
+> applies the **minimal patches** needed to run inference on current stacks
+> (tested on Python 3.10 with recent PyTorch). No behaviour or weights changed.
+>
+> **Patches applied:**
+>
+> | File | Change | Why |
+> |------|--------|-----|
+> | `utils/hparams.py` | `yaml.load(f)` → `yaml.load(f, Loader=yaml.FullLoader)` | PyYAML 5.1+ requires an explicit loader |
+> | `utils/chords.py` | `np.int` / `np.float` / `np.bool` → `int` / `float` / `bool` | NumPy 1.24+ removed the deprecated aliases |
+> | `test.py` | `torch.load(model_file)` → `torch.load(model_file, map_location=device, weights_only=False)` | PyTorch 2.6+ defaults to `weights_only=True`, which breaks loading the 2019 checkpoint dict (`mean`/`std`/`model`) |
+>
+> Nothing else was modified. Training code was left untouched.
+>
+> ---
+
 # A Bi-Directional Transformer for Musical Chord Recognition
 
 This repository has the source codes for the paper "A Bi-Directional Transformer for Musical Chord Recognition"(ISMIR19).
